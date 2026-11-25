@@ -433,6 +433,7 @@ $('#memT').addEventListener('click',async ev=>{const b=ev.target.closest('[data-
 const CFG=window.APP_CONFIG||{};
 const sb=window.supabase&&CFG.SUPABASE_URL?window.supabase.createClient(CFG.SUPABASE_URL,CFG.SUPABASE_ANON_KEY):null;
 function showLogin(msg){$('#login').hidden=false;if(msg)$('#loginMsg').textContent=msg}
+if(!CFG.LOGIN_GOOGLE&&!CFG.LOGIN_MICROSOFT){const l=document.querySelector('label[for=loginEmail]');if(l)l.textContent='Nhập email công việc, hệ thống sẽ gửi link đăng nhập';}
 $('#oauthBtns').innerHTML=(CFG.LOGIN_GOOGLE?'<button type="button" data-oauth="google">Đăng nhập bằng Google</button>':'')+(CFG.LOGIN_MICROSOFT?'<button type="button" data-oauth="azure">Đăng nhập bằng Microsoft</button>':'');
 $('#oauthBtns').addEventListener('click',ev=>{const b=ev.target.closest('[data-oauth]');if(b&&sb)sb.auth.signInWithOAuth({provider:b.dataset.oauth,options:{redirectTo:location.origin+location.pathname,scopes:b.dataset.oauth==='azure'?'email':undefined}})});
 $('#loginForm').addEventListener('submit',async ev=>{ev.preventDefault();const email=$('#loginEmail').value.trim().toLowerCase();const btn=ev.target.querySelector('button');btn.disabled=true;
