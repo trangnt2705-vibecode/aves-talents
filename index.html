@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Tuyển dụng AVES</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* VOICE: bàn làm việc của phòng tuyển dụng, rõ ràng, nhanh, không trang trí thừa
+   IDEA: bảng điều phối hồ sơ: mỗi ứng viên là một tấm thẻ đi qua các khâu, trễ thì đỏ cam
+   PICTURE: phễu tuyển dụng lớn ngay màn hình đầu + bảng điểm nghẽn theo bên đang giữ hồ sơ
+   COLOUR and TYPE: dải xanh trời #4fb3e8, mực #10223a, cam #ff7a1a cho trễ hạn; Outfit + Inter
+   LAYOUT: dải màu trên cùng với số liệu chính và tab; nội dung từng tab bên dưới, bảng xếp chồng trên điện thoại */
+:root{color-scheme:light dark;--bg:light-dark(#f6f9fc,#0b1726);--card:light-dark(#fff,#12233a);--ink:light-dark(#10223a,#e7eef7);--mute:light-dark(#5b6b80,#93a4ba);--line:light-dark(#dde5ee,#223852);--sky:#4fb3e8;--skyd:light-dark(#2b8fc7,#4fb3e8);--band:light-dark(#4fb3e8,#123552);--bandink:light-dark(#0b1d33,#e7eef7);--org:#ff7a1a;--ok:light-dark(#1d8a5a,#4cc38a);--warn:light-dark(#b7791f,#f0b44c)}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 Inter,system-ui,sans-serif;overflow-x:clip}
+h1,h2,h3{font-family:Outfit,Inter,sans-serif;font-weight:600;margin:0;line-height:1.1}
+h1{font-size:clamp(28px,4vw,40px);text-wrap:balance}h2{font-size:20px;margin-bottom:12px}
+.band{padding:clamp(18px,3vw,36px) max(4vw,14px)}
+header{background:var(--band);color:var(--bandink);padding-bottom:0}
+.top{display:flex;flex-wrap:wrap;gap:12px 24px;align-items:flex-end;justify-content:space-between}
+.sub{opacity:.85;margin-top:6px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin:20px 0}
+.kpi{background:light-dark(rgba(255,255,255,.9),rgba(255,255,255,.06));color:var(--ink);border-radius:12px;padding:12px 14px}
+.kpi b{display:block;font:600 clamp(24px,3vw,32px)/1.1 Outfit,sans-serif}.kpi span{font-size:13px;color:var(--mute)}
+.kpi.alert b{color:var(--org)}
+nav{display:flex;gap:4px;flex-wrap:wrap}
+nav a{color:inherit;text-decoration:none;padding:12px 16px;border-radius:10px 10px 0 0;font-weight:500;min-height:44px}
+nav a.on{background:var(--bg);color:var(--ink)}
+main{max-width:1320px;margin:0 auto}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,380px),1fr));gap:16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px}
+.card.wide{grid-column:1/-1}
+.note{color:var(--mute);font-size:13px}
+.bar{display:grid;grid-template-columns:minmax(0,11em) minmax(0,1fr) 5.5em;gap:10px;align-items:center;margin:7px 0;font-size:14px}
+.bar .t{height:22px;background:light-dark(#eaf2f9,#1a2f4a);border-radius:6px;overflow:hidden}
+.bar .f{height:100%;background:var(--sky);border-radius:6px;transition:width .5s}
+.bar .f.o{background:var(--org)}.bar .n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.funnel .bar{grid-template-columns:minmax(0,13em) minmax(0,1fr) 6.5em}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th{text-align:left;font-weight:600;color:var(--mute);font-size:13px;padding:8px;border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:9px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+tbody tr.click{cursor:pointer}tbody tr.click:hover{background:light-dark(#f0f6fb,#162b45)}
+.tag{display:inline-block;padding:2px 9px;border-radius:99px;font-size:12.5px;font-weight:600;white-space:nowrap;background:light-dark(#eef2f6,#1d3149)}
+.tag.late{background:var(--org);color:#fff}.tag.soon{background:light-dark(#fff1d6,#4a3a12);color:var(--warn)}.tag.ok{color:var(--ok)}
+.tag.p0{background:light-dark(#ffe6d5,#4a2a12);color:light-dark(#b34a00,#ffb27a)}.tag.done{background:light-dark(#dff3e8,#173d2b);color:var(--ok)}
+.tools{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:14px}
+input,select,textarea{font:inherit;font-size:16px;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:9px;padding:9px 10px;min-height:44px;width:100%}
+.tools input,.tools select{width:auto;flex:1 1 170px}
+textarea{min-height:70px;resize:vertical}
+button{font:inherit;font-weight:600;border:0;border-radius:9px;padding:10px 16px;min-height:44px;cursor:pointer;background:light-dark(#e6eef6,#1d3149);color:var(--ink)}
+button.pri{background:var(--skyd);color:#fff}button.danger{background:transparent;color:var(--org);border:1px solid var(--org)}
+button:focus-visible,input:focus-visible,select:focus-visible,a:focus-visible,textarea:focus-visible{outline:3px solid var(--org);outline-offset:2px}
+.scroll{overflow-x:auto}
+dialog{border:0;border-radius:16px;padding:0;width:min(760px,96vw);max-height:92vh;background:var(--card);color:var(--ink);box-shadow:0 20px 60px rgba(0,0,0,.35)}
+dialog::backdrop{background:rgba(8,20,36,.55)}
+.dlg{padding:20px;overflow:auto;max-height:92vh}
+.form{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,210px),1fr));gap:12px}
+.form label{display:block;font-size:13px;color:var(--mute);font-weight:500}.form label>*{margin-top:4px}
+.form .full{grid-column:1/-1}
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,200px),1fr));gap:10px;margin:14px 0}
+.steps label{border-left:3px solid var(--line);padding-left:10px}.steps label.has{border-color:var(--sky)}
+.acts{display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-end;margin-top:16px}.acts .sp{flex:1}
+.status{padding:10px 14px;border-radius:10px;background:light-dark(#fff1d6,#3a2e10);margin-bottom:14px}
+.status:empty{display:none}
+.board{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(230px,1fr);gap:10px;overflow-x:auto;padding-bottom:8px}
+.col{background:light-dark(#eaf2f9,#11233a);border-radius:12px;padding:10px;min-height:220px}.col.over{outline:3px dashed var(--skyd);outline-offset:-3px}
+.col h3{font-size:15px;margin:2px 2px 4px}.col .note{margin:0 2px 10px}
+.kc{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:9px 10px;margin-bottom:8px;cursor:grab;font-size:14px}.kc.late{border-left:4px solid var(--org)}.kc.soon{border-left:4px solid var(--warn)}
+.kc b{display:block}.kc .row{display:flex;justify-content:space-between;align-items:center;gap:6px;margin-top:6px}
+.kc button{min-height:36px;padding:4px 10px;font-size:13px;white-space:nowrap;flex:none}
+.tag.chk{background:light-dark(#fff1d6,#4a3a12);color:var(--warn)}
+.warnbox{border-left:4px solid var(--warn);background:light-dark(#fff8e8,#2e2610);padding:10px 14px;border-radius:8px;margin-top:14px;font-size:14px}.warnbox ul{margin:4px 0 0;padding-left:18px}
+.login{position:fixed;inset:0;z-index:20;background:var(--band);display:grid;place-items:center;padding:20px}
+.login .box{background:var(--card);color:var(--ink);border-radius:18px;padding:28px;width:min(420px,100%);box-shadow:0 20px 60px rgba(0,0,0,.25)}
+.login .box h1{font-size:30px;margin-bottom:6px}.login .box form{display:grid;gap:10px;margin-top:18px}
+.who{display:flex;gap:10px;align-items:center;flex-wrap:wrap;font-size:14px}.who button{min-height:36px;padding:6px 12px;background:light-dark(rgba(255,255,255,.85),rgba(255,255,255,.1))}
+.ro #addCand,.ro #addPos,.ro #quickCard,.ro [data-act],.ro [data-next],.ro #impCard,.ro #saveSla,.ro #dlgForm button[type=submit],.ro #del,.ro #nextStep{display:none!important}
+.toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:10px;opacity:0;transition:opacity .3s;pointer-events:none;z-index:9}
+.toast.on{opacity:1}
+.empty{padding:28px;text-align:center;color:var(--mute)}
+ul.w{margin:6px 0;padding-left:20px;font-size:13px;color:var(--mute)}
+@media(prefers-reduced-motion:reduce){.bar .f{transition:none}}
+@media(max-width:600px){table{font-size:13px}.stack thead{display:none}.stack tr{display:grid;padding-block:10px;border-bottom:1px solid var(--line)}.stack td{display:flow-root;border:0;padding:3px 0;padding-inline-start:8.5em;text-align:start}.stack td::before{content:attr(data-l);float:inline-start;width:8em;margin-inline-start:-8.5em;color:var(--mute);white-space:normal}.stack td:empty{display:none}.bar{grid-template-columns:minmax(0,8em) minmax(0,1fr) 4.5em}nav a{padding:10px 11px}}
+</style>
+<script>new MutationObserver(()=>{for(const c of document.querySelectorAll('.stack td:not([data-l])')){let i=0,p=c;while(p=p.previousElementSibling)i+=p.colSpan;c.dataset.l=c.closest('table').rows[0].cells[i]?.textContent||''}}).observe(document,{childList:true,subtree:true})</script>
+</head>
+<body>
+<header class="band">
+ <div class="top"><div><h1>Tuyển dụng AVES</h1><div class="sub" id="sub">Đang tải dữ liệu…</div></div><div class="who" id="who"></div></div>
+ <div class="kpis" id="kpis"></div>
+ <nav id="nav"><a href="#tong-quan" data-v="tong-quan">Tổng quan</a><a href="#ung-vien" data-v="ung-vien">Ứng viên</a><a href="#bang-khau" data-v="bang-khau">Bảng khâu</a><a href="#vi-tri" data-v="vi-tri">Vị trí</a><a href="#cai-dat" data-v="cai-dat">Cam kết và dữ liệu</a><a href="#nguoi-dung" data-v="nguoi-dung" id="navUsers" hidden>Người dùng</a></nav>
+</header>
+<main class="band">
+ <div class="status" id="status"></div>
+ <section id="v-tong-quan" hidden>
+  <div class="grid">
+   <div class="card funnel"><h2>Phễu xử lý CV</h2><div id="funnel"></div><p class="note">Tính từ bước HR phỏng vấn vì app chỉ chứa các CV HR đã xử lý, không phải toàn bộ CV nhận được. Một hồ sơ được tính là đã qua một mốc khi mốc đó hoặc mốc sau đã có ngày.</p></div>
+   <div class="card"><h2>Điểm nghẽn: ai đang giữ hồ sơ</h2><div class="scroll"><table id="bottle"></table></div><p class="note">Số ngày chờ tính bằng ngày làm việc từ mốc cập nhật gần nhất.</p></div>
+   <div class="card"><h2>Lấp đầy theo khối</h2><div id="bykhoi"></div></div>
+   <div class="card"><h2>Hồ sơ theo khâu hiện tại</h2><div id="bystage"></div></div>
+   <div class="card"><h2>7 ngày qua</h2><div class="scroll"><table id="speed"></table></div></div>
+   <div class="card"><h2>Nguồn CV</h2><div id="bysource"></div></div>
+   <div class="card wide"><h2>Tiến độ theo tháng</h2><div class="scroll"><table id="monthT"></table></div><p class="note">Tổng headcount đang mở: số cần tuyển của các vị trí đã mở và chưa đóng trong tháng. Offer: số thư mời đã gửi. Onboard luỹ tiến: số người đã đi làm của các vị trí đó tính đến cuối tháng. Tỷ lệ lấp đầy = Onboard luỹ tiến / Tổng headcount đang mở.</p></div>
+   <div class="card wide"><h2>Hồ sơ cần xử lý ngay</h2><div class="scroll"><table class="stack" id="urgent"></table></div></div>
+  </div>
+ </section>
+ <div class="tools" id="candTools" hidden>
+   <input id="q" type="search" placeholder="Tìm tên, vị trí, ghi chú" aria-label="Tìm">
+   <select id="fPos" aria-label="Lọc vị trí"></select>
+   <select id="fHM" aria-label="Lọc hiring manager"></select>
+   <select id="fOwner" aria-label="Lọc bên đang giữ"><option value="">Mọi bên đang giữ</option><option>Nhân sự</option><option>Phòng chuyên môn</option><option>CEO</option><option>Ứng viên</option></select>
+   <select id="fStage" aria-label="Lọc khâu"></select>
+   <select id="fStatus" aria-label="Lọc tình trạng"><option value="">Mọi tình trạng</option><option>Overdue</option><option>Due today</option><option>On track</option><option value="open">Đang mở</option><option value="warn">Cần kiểm tra dữ liệu</option></select>
+   <button class="pri" id="addCand">Thêm ứng viên</button>
+ </div>
+ <section id="v-ung-vien" hidden>
+  <div class="grid" style="margin-bottom:16px">
+   <div class="card" id="quickCard"><h2>Thêm CV nhanh</h2>
+    <form id="quick" class="form" autocomplete="off">
+     <label class="full">Họ tên<textarea name="ten" rows="1" placeholder="Một người một dòng. Dán nhiều dòng để thêm nhiều CV cùng lúc" required style="min-height:44px"></textarea></label>
+     <label>Vị trí<select name="viTri" id="qPos" required></select></label>
+     <label>Nguồn CV<select name="nguon" id="qSrc"></select></label>
+     <label>SĐT hoặc email<input name="lienHe" placeholder="Không bắt buộc"></label>
+     <label>Link CV<input name="linkCV" type="url" placeholder="https://… (không bắt buộc)"></label>
+     <label>Ngày nhận CV<input name="nhanCV" type="date" id="qDate"></label>
+     <label>Kết quả HR phỏng vấn<select name="hr"><option value="">Chưa phỏng vấn</option><option value="pass">Đạt</option><option value="send">Đạt, gửi Chuyên môn luôn</option></select></label>
+     <div class="acts full" style="margin-top:0"><button class="pri" type="submit">Thêm CV</button></div>
+    </form></div>
+   <div class="card"><h2>Việc của HR hôm nay</h2><div id="hrToday"></div></div>
+  </div>
+  <div class="card"><div class="scroll"><table class="stack" id="cands"></table></div></div>
+ </section>
+ <section id="v-bang-khau" hidden>
+  <p class="note">Kéo thẻ sang cột bên phải (hoặc bấm nút trên thẻ) để ghi nhận khâu đã xong hôm nay. Bấm vào thẻ để mở hồ sơ. Hồ sơ đã nhận việc hoặc đã đóng không hiện ở đây.</p>
+  <div class="board" id="board"></div>
+ </section>
+ <section id="v-vi-tri" hidden>
+  <div class="tools">
+   <input id="qp" type="search" placeholder="Tìm vị trí, hiring manager" aria-label="Tìm vị trí">
+   <select id="fKhoi" aria-label="Lọc khối"></select>
+   <select id="fPStatus" aria-label="Lọc tình trạng vị trí"><option value="">Mọi tình trạng</option><option>Open</option><option>Delayed</option><option>Not opened</option><option>Filled</option><option>Closed</option></select>
+   <button class="pri" id="addPos">Thêm vị trí</button>
+  </div>
+  <div class="card"><div class="scroll"><table class="stack" id="poss"></table></div></div>
+ </section>
+ <section id="v-cai-dat" hidden>
+  <div class="grid">
+   <div class="card"><h2>Cam kết thời gian theo khâu</h2><p class="note">Theo Quy trình tuyển dụng AVES_NS07.09.26. Đổi số ngày rồi bấm Lưu, cả app tính lại.</p><div class="scroll"><table id="slaT"></table></div><div class="acts"><button class="pri" id="saveSla">Lưu cam kết</button></div></div>
+   <div class="card" id="impCard"><h2>Nhập từ file Excel</h2><p class="note">Chọn file theo mẫu “AVES. Tracking tuyen dung.xlsx” (sheet Vị trí đang tuyển, Tracking CV, SLA và quy ước).</p>
+    <input type="file" id="file" accept=".xlsx,.xls" aria-label="Chọn file Excel"><div id="impPrev"></div>
+    <h2 style="margin-top:24px">Xuất ra Excel</h2><p class="note">Tải về file Excel gồm danh sách vị trí và ứng viên kèm khâu, tình trạng đã tính.</p>
+    <div class="acts" style="justify-content:flex-start"><button id="exportX">Tải file Excel</button></div></div>
+   <div class="card wide"><h2>Dữ liệu cần kiểm tra</h2><p class="note">App tự phát hiện: thiếu tên, ngày bị ngược thứ tự, ngày gõ nhầm năm, ngày ở tương lai, ứng viên trùng. Bấm vào dòng để sửa.</p><div class="scroll"><table class="stack" id="checkT"></table></div></div>
+  </div>
+ </section>
+  <section id="v-nguoi-dung" hidden>
+  <div class="grid">
+   <div class="card"><h2>Thêm người dùng</h2><p class="note">Người dùng đăng nhập bằng đúng email này (Google, Microsoft hoặc link gửi qua email).</p>
+    <form id="memForm" class="form"><label class="full">Email<input name="email" type="email" required placeholder="ten@aves.tech"></label>
+     <label class="full">Quyền<select name="role"><option value="editor">Editor: nhập và sửa dữ liệu</option><option value="viewer">Viewer: chỉ xem</option><option value="admin">Admin: toàn quyền, quản lý người dùng</option></select></label>
+     <div class="acts full" style="margin-top:0"><button class="pri" type="submit">Thêm</button></div></form></div>
+   <div class="card"><h2>Danh sách người dùng</h2><div class="scroll"><table class="stack" id="memT"></table></div></div>
+  </div>
+ </section>
+</main>
+<div class="login" id="login" hidden><div class="box">
+ <h1>Tuyển dụng AVES</h1><p class="note" id="loginMsg">Đăng nhập để xem và cập nhật tình hình tuyển dụng.</p>
+ <div id="oauthBtns" style="display:grid;gap:10px;margin-top:18px"></div>
+ <form id="loginForm"><label class="note" for="loginEmail">Hoặc nhận link đăng nhập qua email</label><input id="loginEmail" type="email" required placeholder="ten@aves.tech" autocomplete="email"><button class="pri" type="submit">Gửi link đăng nhập</button></form>
+</div></div>
+<dialog id="dlg"><form class="dlg" id="dlgForm" method="dialog"></form></dialog>
+<div class="toast" id="toast" role="status"></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script src="config.js"></script>
+<script src="logic.js"></script>
+<script src="store.js"></script>
+<script>
+{
+const $=s=>document.querySelector(s),esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmt=s=>s?s.split('-').reverse().join('/'):'';
+const pct=(a,b)=>b?Math.round(a/b*100)+'%':'';
+let db=null,P=[],C=[],SLA={},loaded={p:0,c:0},canWrite=true,role=null,me='',M=[];
+const T=()=>todayISO();
+const toast=m=>{const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove('on'),2600)};
+const setStatus=m=>$('#status').textContent=m||'';
+const tagStatus=s=>s==='Overdue'?'<span class="tag late">Overdue</span>':s==='Due today'?'<span class="tag soon">Due today</span>':s?'<span class="tag ok">'+s+'</span>':'';
+const tagPos=s=>({'Delayed':'late','Filled':'done','Open':'ok'}[s]?`<span class="tag ${({'Delayed':'late','Filled':'done','Open':'ok'})[s]}">${s}</span>`:`<span class="tag">${s}</span>`);
+const bars=(rows,max,cls='')=>rows.map(r=>`<div class="bar"><span title="${esc(r[0])}">${esc(r[0])}</span><div class="t"><div class="f ${r[3]||cls}" style="width:${max?Math.min(100,r[1]/max*100):0}%"></div></div><span class="n">${r[2]??r[1]}</span></div>`).join('')||'<div class="empty">Chưa có dữ liệu</div>';
+const enriched=()=>C.map(c=>({...c,e:evalCand(c,SLA,T()),w:checkCand(c,C,T(),P)}));
+
+function renderAll(){
+ const today=T(),E=enriched(),PE=P.map(p=>({...p,e:evalPos(p,C,today)}));
+ const need=PE.reduce((s,p)=>s+p.e.need,0),hired=PE.reduce((s,p)=>s+p.e.hired,0),up=PE.reduce((s,p)=>s+p.e.upcoming,0);
+ const late=E.filter(x=>x.e.status==='Overdue').length,open=E.filter(x=>!['xong','dong'].includes(x.e.stage)).length;
+ $('#sub').textContent=`${P.length} vị trí, ${C.length} hồ sơ ứng viên. Cập nhật đến ${fmt(today)}.`;
+ $('#kpis').innerHTML=[[need,'Headcount cần tuyển'],[hired,'Đã nhận việc'],[up,'Sắp nhận việc'],[Math.max(0,need-hired-up),'Còn phải tuyển'],[pct(hired,need)||'–','Tỷ lệ lấp đầy'],[open,'Hồ sơ đang mở'],[late,'Hồ sơ trễ hạn',late?'alert':'']].map(k=>`<div class="kpi ${k[2]||''}"><b>${k[0]}</b><span>${k[1]}</span></div>`).join('');
+ // phễu
+ const idx=k=>DATES.findIndex(f=>f.k===k),has=k=>E.filter(x=>x.dates&&DATES.some((f,i)=>i>=idx(k)&&x.dates[f.k])).length,base=has('hrLoc');
+ const F=[['HR phỏng vấn','hrLoc'],['Gửi Chuyên môn','guiCM'],['Chuyên môn phỏng vấn','pvCM'],['Offer','guiThu'],['Onboard','nhanViec']].map(([n,k])=>{const v=has(k);return [n,v,`${v}${base?' · '+pct(v,base):''}`]});
+ $('#funnel').innerHTML=bars(F,Math.max(...F.map(f=>f[1]),1));
+ // điểm nghẽn
+ const owners=['Nhân sự','Phòng chuyên môn','CEO','Ứng viên'];
+ $('#bottle').innerHTML='<thead><tr><th>Bên</th><th class="num">Đang giữ</th><th class="num">Trễ hạn</th><th class="num">Chờ lâu nhất</th></tr></thead><tbody>'+owners.map(o=>{const m=E.filter(x=>x.e.owner===o);const l=m.filter(x=>x.e.status==='Overdue').length;const mx=Math.max(-1,...m.map(x=>x.e.wait??-1));return `<tr><td>${o}</td><td class="num">${m.length}</td><td class="num">${l?'<span class="tag late">'+l+'</span>':0}</td><td class="num">${mx>=0?mx+' ngày':''}</td></tr>`}).join('')+'</tbody>';
+ // theo khối
+ const ks=[...new Set(PE.map(p=>p.khoi||'Chưa phân khối'))];
+ const KR=ks.map(k=>{const m=PE.filter(p=>(p.khoi||'Chưa phân khối')===k);const n=m.reduce((s,p)=>s+p.e.need,0),h=m.reduce((s,p)=>s+p.e.hired+p.e.upcoming,0);return [k,h,`${h}/${n}`,'',n]}).filter(r=>r[4]).sort((a,b)=>b[4]-a[4]);
+ $('#bykhoi').innerHTML=KR.map(r=>`<div class="bar"><span title="${esc(r[0])}">${esc(r[0])}</span><div class="t"><div class="f" style="width:${Math.min(100,r[1]/r[4]*100)}%"></div></div><span class="n">${r[2]}</span></div>`).join('')+'<p class="note">Đã nhận việc hoặc đã chốt ngày nhận việc / cần tuyển.</p>';
+ // theo khâu
+ const SR=STAGES.map(s=>{const m=E.filter(x=>x.e.stage===s.k);const l=m.filter(x=>x.e.status==='Overdue').length;return [s.name,m.length,m.length+(l?` · ${l} trễ`:''),l?'o':'']}).filter(r=>r[1]);
+ $('#bystage').innerHTML=bars(SR,Math.max(...SR.map(r=>r[1]),1));
+ // 7 ngày
+ const wk=isoOf(new Date(Date.now()-7*864e5));const cnt=k=>E.filter(x=>x.dates&&x.dates[k]&&x.dates[k]>=wk&&x.dates[k]<=today).length;
+ const avg=a=>a.length?(a.reduce((s,v)=>s+v,0)/a.length).toFixed(1)+' ngày':'chưa có';
+ $('#speed').innerHTML='<tbody>'+[['HR phỏng vấn',cnt('hrLoc')],['Chuyên môn phỏng vấn',cnt('pvCM')],['Offer đã gửi',cnt('guiThu')],['Onboard',cnt('nhanViec')],['Trung bình từ nhận CV đến offer',avg(E.map(x=>x.e.cvToOffer).filter(v=>v>0))],['Trung bình từ nhận CV đến onboard',avg(E.filter(x=>x.e.hired).map(x=>x.e.total).filter(v=>v>0))]].map(r=>`<tr><td>${r[0]}</td><td class="num">${r[1]}</td></tr>`).join('')+'</tbody>';
+ // nguồn
+ const src={};E.forEach(x=>{const s=x.nguon||'Chưa ghi';src[s]=src[s]||[0,0];src[s][0]++;if(x.e.hired||x.e.stage==='cho')src[s][1]++});
+ const SRC=Object.entries(src).sort((a,b)=>b[1][0]-a[1][0]).map(([k,v])=>[k,v[0],`${v[0]} · ${v[1]} nhận`]);
+ $('#bysource').innerHTML=bars(SRC,Math.max(...SRC.map(r=>r[1]),1))+'<p class="note">Số hồ sơ theo nguồn · số người đã nhận hoặc sắp nhận việc.</p>';
+ // khẩn
+ const U=E.filter(x=>x.e.status==='Overdue'||x.e.status==='Due today').sort((a,b)=>(b.e.wait-b.e.commit)-(a.e.wait-a.e.commit));
+ $('#urgent').innerHTML=U.length?'<thead><tr><th>Ứng viên</th><th>Vị trí</th><th>Khâu hiện tại</th><th>Đang chờ</th><th class="num">Chờ / cam kết</th><th>Tình trạng</th></tr></thead><tbody>'+U.map(x=>`<tr class="click" data-id="${x.id}"><td>${esc(x.ten||'(chưa có tên)')}</td><td>${esc(x.viTri)}</td><td>${esc(x.e.stageName)}</td><td>${x.e.owner}</td><td class="num">${x.e.wait} / ${x.e.commit} ngày</td><td>${tagStatus(x.e.status)}</td></tr>`).join('')+'</tbody>':'<tbody><tr><td class="empty">Không có hồ sơ nào trễ hoặc sắp trễ.</td></tr></tbody>';
+ // theo tháng
+ const months=[];{const d=new Date();for(let i=3;i>=0;i--){const x=new Date(d.getFullYear(),d.getMonth()-i,1);months.push(x.getFullYear()+'-'+pad(x.getMonth()+1))}}
+ const MS=months.map(m=>monthStats(m,P,C,today));
+ const mrow=(l,f)=>`<tr><td>${l}</td>${MS.map(f).map(v=>`<td class="num">${v}</td>`).join('')}</tr>`;
+ $('#monthT').innerHTML='<thead><tr><th>Chỉ số</th>'+months.map(m=>`<th class="num">Tháng ${+m.slice(5)}/${m.slice(0,4)}</th>`).join('')+'</tr></thead><tbody>'+mrow('Tổng headcount đang mở',x=>x.need)+mrow('Headcount mở mới trong tháng',x=>x.opened)+mrow('HR phỏng vấn',x=>x.hrpv)+mrow('Chuyên môn phỏng vấn',x=>x.pv)+mrow('Offer',x=>x.thu)+mrow('Onboard',x=>x.hired)+mrow('Onboard luỹ tiến',x=>x.hiredCum)+mrow('Còn lại cần tuyển',x=>Math.max(0,x.need-x.hiredCum))+mrow('Tỷ lệ lấp đầy',x=>x.fill==null?'':Math.round(x.fill*100)+'%')+'</tbody>';
+ // kiểm tra dữ liệu
+ const WL=E.filter(x=>x.w.length);
+ $('#checkT').innerHTML=WL.length?'<thead><tr><th>Ứng viên</th><th>Vị trí</th><th>Vấn đề</th></tr></thead><tbody>'+WL.map(x=>`<tr class="click" data-id="${x.id}"><td>${esc(x.ten||'(chưa có tên)')}</td><td>${esc(x.viTri)}</td><td>${x.w.map(esc).join('<br>')}</td></tr>`).join('')+'</tbody>':'<tbody><tr><td class="empty">Không phát hiện vấn đề nào.</td></tr></tbody>';
+ renderCands(E);renderBoard(E);renderPoss(PE);renderSla();
+}
+function fillSelect(el,opts,first){const v=el.value;el.innerHTML=`<option value="">${first}</option>`+opts.map(o=>`<option>${esc(o)}</option>`).join('');if(opts.includes(v))el.value=v}
+function filtered(E){
+ fillSelect($('#fPos'),[...new Set([...P.map(p=>p.ten),...C.map(c=>c.viTri)].filter(Boolean))].sort(),'Mọi vị trí');
+ fillSelect($('#fHM'),[...new Set(P.map(p=>p.hm).filter(Boolean))].sort(),'Mọi hiring manager');
+ fillSelect($('#fStage'),STAGES.map(s=>s.name),'Mọi khâu');
+ const q=$('#q').value.toLowerCase(),fp=$('#fPos').value,fs=$('#fStage').value,ft=$('#fStatus').value,fo=$('#fOwner').value,fh=$('#fHM').value;
+ const hmPos=fh?new Set(P.filter(p=>p.hm===fh).map(p=>p.ten)):null;
+ return E.filter(x=>(!q||[x.ten,x.viTri,x.ghiChu,x.nguon].join(' ').toLowerCase().includes(q))&&(!fp||x.viTri===fp)&&(!hmPos||hmPos.has(x.viTri))&&(!fo||x.e.owner===fo)&&(!fs||x.e.stageName===fs)&&(!ft||(ft==='open'?!['xong','dong'].includes(x.e.stage):ft==='warn'?x.w.length:x.e.status===ft)));
+}
+function renderBoard(E){
+ const R=filtered(E||enriched()),cols=STAGES.filter(s=>!['xong','dong'].includes(s.k));
+ $('#board').innerHTML=cols.map((s,i)=>{const m=R.filter(x=>x.e.stage===s.k).sort((a,b)=>(b.e.wait??-1)-(a.e.wait??-1));const nx=STAGES[STAGES.indexOf(s)+1];
+  return `<div class="col" data-stage="${s.k}"><h3>${s.name}</h3><p class="note">${s.owner} · ${slaOf(SLA,s.k).days} ngày · ${m.length} hồ sơ</p>${m.map(x=>`<div class="kc ${x.e.status==='Overdue'?'late':x.e.status==='Due today'?'soon':''}" draggable="true" data-id="${x.id}" tabindex="0"><b>${esc(x.ten||'(chưa có tên)')}</b><span class="note">${esc(x.viTri)}</span><div class="row"><span>${x.e.wait!=null?x.e.wait+'/'+x.e.commit+' ngày '+tagStatus(x.e.status):''}${x.w.length?' <span class="tag chk">Cần kiểm tra</span>':''}</span><button type="button" data-next="${x.id}" title="Ghi nhận xong khâu này hôm nay">${nx.k==='xong'?'Đã nhận việc':'Xong ›'}</button></div></div>`).join('')}</div>`}).join('');
+}
+async function moveTo(id,target){
+ const c=C.find(x=>x.id===id);if(!c)return;const cur=evalCand(c,SLA,T()).stage,order=STAGES.map(s=>s.k);
+ if(order.indexOf(target)<=order.indexOf(cur)){toast('Chỉ kéo được sang khâu sau. Muốn lùi khâu thì mở hồ sơ để sửa ngày.');return}
+ const f=DATES.find(x=>x.next===target);if(!f)return;
+ const dates={...(c.dates||{}),[f.k]:T()};
+ if(await write(()=>db.collection('candidates').doc(id).update({dates,capNhat:new Date().toISOString()})))toast(`${c.ten||'Hồ sơ'}: ghi nhận ${f.label} hôm nay`);
+}
+function renderHR(E){
+ const posNames=[...new Set(P.map(p=>p.ten).filter(Boolean))].sort();
+ const qp=$('#qPos');if(document.activeElement!==qp){const v=qp.value;qp.innerHTML='<option value="">Chọn vị trí</option>'+posNames.map(n=>`<option>${esc(n)}</option>`).join('');if(posNames.includes(v))qp.value=v}
+ const qs=$('#qSrc');if(!qs.options.length){qs.innerHTML='<option value=""></option>'+SOURCES.map(n=>`<option>${esc(n)}</option>`).join('')}
+ if(!$('#qDate').value)$('#qDate').value=T();
+ const g1=E.filter(x=>x.e.stage==='loc'),g2=E.filter(x=>x.e.stage==='gui'),g3=E.filter(x=>x.e.owner==='Phòng chuyên môn'&&x.e.status==='Overdue');
+ const item=(x,btns)=>`<div class="kc" data-id="${x.id}" tabindex="0" style="cursor:pointer"><b>${esc(x.ten||'(chưa có tên)')}</b><span class="note">${esc(x.viTri)}${x.e.wait!=null?' · chờ '+x.e.wait+' ngày':''}</span><div class="row" style="justify-content:flex-start;flex-wrap:wrap">${btns}${x.e.status&&x.e.status!=='On track'?' '+tagStatus(x.e.status):''}</div></div>`;
+ const b=(act,id,t,cls='')=>`<button type="button" class="${cls}" data-act="${act}" data-cid="${id}">${t}</button>`;
+ const grp=(t,arr,f,empty)=>`<h3 style="font-size:15px;margin:14px 0 8px">${t} · ${arr.length}</h3>`+(arr.length?arr.slice(0,8).map(f).join('')+(arr.length>8?`<p class="note">và ${arr.length-8} hồ sơ khác, xem ở bảng bên dưới.</p>`:''):`<p class="note">${empty}</p>`);
+ $('#hrToday').innerHTML=grp('Chờ HR phỏng vấn',g1,x=>item(x,b('send',x.id,'Đạt, gửi CM','pri')+b('pass',x.id,'Đạt')+b('rej',x.id,'Loại','danger')),'Không còn CV nào chờ phỏng vấn.')
+  +grp('Đạt, chưa gửi Chuyên môn',g2,x=>item(x,b('sent',x.id,'Đã gửi CM','pri')+b('rej',x.id,'Loại','danger')),'Không có hồ sơ nào đang chờ gửi.')
+  +grp('Chuyên môn giữ quá hạn, cần nhắc',g3,x=>item(x,''),'Chuyên môn không giữ hồ sơ nào quá hạn.');
+}
+function openReject(id){
+ const c=C.find(x=>x.id===id);if(!c)return;
+ form.innerHTML=`<h2>Loại hồ sơ: ${esc(c.ten||'')}</h2><p class="note">${esc(c.viTri)} · đang ở khâu ${esc(evalCand(c,SLA,T()).stageName)}</p>
+ <div class="form"><label>Status<select name="ketQua">${opt(['Rejected','Withdrawn','Offer declined','Hiring stopped'],'Rejected')}</select></label>
+ <label>Lý do<select name="lyDoLoai" required><option value="">Chọn lý do</option>${opt(REASONS,'')}</select></label>
+ <label class="full">Ghi chú<textarea name="ghiChu">${esc(c.ghiChu)}</textarea></label></div>
+ <div class="acts"><span class="sp"></span><button type="button" id="cancel">Đóng</button><button class="danger" type="submit">Xác nhận loại</button></div>`;
+ form.onsubmit=async ev=>{ev.preventDefault();const f=new FormData(form);const e=evalCand(c,SLA,T());const dates={...(c.dates||{})};if(e.stage==='loc'&&!dates.hrLoc)dates.hrLoc=T();
+  if(await write(()=>db.collection('candidates').doc(id).update({ketQua:f.get('ketQua'),lyDoLoai:f.get('lyDoLoai'),ghiChu:f.get('ghiChu').trim(),loaiTai:e.stageName,dates,capNhat:new Date().toISOString()}))){dlg.close();toast('Đã cập nhật hồ sơ')}};
+ bindCommon(null);dlg.showModal();
+}
+async function hrAct(act,id){
+ const c=C.find(x=>x.id===id);if(!c)return;if(act==='rej')return openReject(id);
+ const dates={...(c.dates||{})},t=T();
+ if(act==='pass'||act==='send'){if(!dates.hrLoc)dates.hrLoc=t}
+ if(act==='send'||act==='sent'){if(!dates.hrLoc)dates.hrLoc=t;dates.guiCM=t}
+ if(await write(()=>db.collection('candidates').doc(id).update({dates,ketQua:c.ketQua||'In progress',capNhat:new Date().toISOString()})))toast(`${c.ten||'Hồ sơ'}: ${act==='pass'?'đạt HR phỏng vấn':'đã gửi Chuyên môn'}`);
+}
+function renderCands(E){
+ E=E||enriched();renderHR(E);
+ const R=filtered(E)
+  .sort((a,b)=>{const r=s=>s==='Overdue'?0:s==='Due today'?1:s?2:3;return r(a.e.status)-r(b.e.status)||(b.e.wait??-1)-(a.e.wait??-1)||(a.viTri||'').localeCompare(b.viTri||'')});
+ $('#cands').innerHTML=R.length?'<thead><tr><th>Họ tên</th><th>Vị trí</th><th>Nguồn</th><th>Khâu hiện tại</th><th>Đang chờ</th><th class="num">Chờ / cam kết</th><th>Tình trạng</th><th>Kết quả</th><th>Ghi chú</th></tr></thead><tbody>'+R.map(x=>`<tr class="click" data-id="${x.id}"><td><b>${esc(x.ten||'(chưa có tên)')}</b>${x.w.length?' <span class="tag chk" title="'+esc(x.w.join('; '))+'">Cần kiểm tra</span>':''}</td><td>${esc(x.viTri)}</td><td>${esc(x.nguon)}</td><td>${esc(x.e.stageName)}</td><td>${x.e.owner}</td><td class="num">${x.e.wait!=null?x.e.wait+' / '+x.e.commit+' ngày':''}</td><td>${tagStatus(x.e.status)}</td><td>${esc(x.ketQua)}</td><td>${esc(x.ghiChu)}</td></tr>`).join('')+`</tbody>`:`<tbody><tr><td class="empty">${C.length?'Không có hồ sơ khớp bộ lọc.':'Chưa có ứng viên. Bấm Thêm ứng viên hoặc nhập từ file Excel.'}</td></tr></tbody>`;
+}
+function renderPoss(PE){
+ PE=PE||P.map(p=>({...p,e:evalPos(p,C,T())}));
+ fillSelect($('#fKhoi'),[...new Set(P.map(p=>p.khoi).filter(Boolean))].sort(),'Mọi khối');
+ const q=$('#qp').value.toLowerCase(),fk=$('#fKhoi').value,fs=$('#fPStatus').value;
+ const ord={'Delayed':0,'Open':1,'Not opened':2,'Filled':3,'Closed':4};
+ const R=PE.filter(p=>(!q||[p.ten,p.hm,p.phong].join(' ').toLowerCase().includes(q))&&(!fk||p.khoi===fk)&&(!fs||p.e.status===fs)).sort((a,b)=>(a.uuTien==='P0 Gấp'?0:1)-(b.uuTien==='P0 Gấp'?0:1)||ord[a.e.status]-ord[b.e.status]||(b.e.days??0)-(a.e.days??0));
+ $('#poss').innerHTML=R.length?'<thead><tr><th>Vị trí</th><th>Khối · Phòng</th><th>Hiring manager</th><th class="num">Cần</th><th class="num">CV</th><th class="num">Phỏng vấn</th><th class="num">Thư mời</th><th class="num">Nhận việc</th><th class="num">Ngày đã mở</th><th>Ưu tiên</th><th>Tình trạng</th></tr></thead><tbody>'+R.map(p=>`<tr class="click" data-pid="${p.id}"><td><b>${esc(p.ten)}</b>${p.cap?' <span class="note">'+esc(p.cap)+'</span>':''}</td><td>${esc(p.khoi)}${p.phong?' · '+esc(p.phong):''}</td><td>${esc(p.hm)}</td><td class="num">${p.e.need}</td><td class="num">${p.e.cv}</td><td class="num">${p.e.pv}</td><td class="num">${p.e.thu}</td><td class="num">${p.e.hired}${p.e.upcoming?' +'+p.e.upcoming:''}</td><td class="num">${p.e.days??''}</td><td>${p.uuTien==='P0 Gấp'?'<span class="tag p0">P0 Gấp</span>':esc(p.uuTien)}</td><td>${tagPos(p.e.status)}</td></tr>`).join('')+'</tbody>':`<tbody><tr><td class="empty">${P.length?'Không có vị trí khớp bộ lọc.':'Chưa có vị trí nào.'}</td></tr></tbody>`;
+}
+function renderSla(){
+ if(document.activeElement&&document.activeElement.closest&&document.activeElement.closest('#slaT'))return;
+ $('#slaT').innerHTML='<thead><tr><th>Khâu</th><th>Bên chịu trách nhiệm</th><th class="num">Cam kết (ngày làm việc)</th></tr></thead><tbody>'+STAGES.filter(s=>!['xong','dong'].includes(s.k)).map(s=>`<tr><td>${s.name}<div class="note">${s.todo}</div></td><td>${s.owner}</td><td class="num"><input type="number" min="0" max="120" data-k="${s.k}" value="${slaOf(SLA,s.k).days}" style="width:5.5em" aria-label="Cam kết ${s.name}"></td></tr>`).join('')+'</tbody>';
+}
+/* ---------- hộp thoại sửa ---------- */
+const dlg=$('#dlg'),form=$('#dlgForm');
+const opt=(arr,v)=>(arr.includes(v)||!v?'':`<option selected>${esc(v)}</option>`)+arr.map(o=>`<option ${o===v?'selected':''}>${esc(o)}</option>`).join('');
+function openCand(id){
+ const c=id?C.find(x=>x.id===id):{viTri:$('#fPos').value,ten:'',nguon:'',dates:{nhanCV:T()},ketQua:'In progress',ghiChu:''};if(!c)return;
+ const d=c.dates||{},e=evalCand(c,SLA,T());
+ const posNames=[...new Set([...P.map(p=>p.ten),c.viTri].filter(Boolean))].sort();
+ form.innerHTML=`<h2>${id?esc(c.ten||'Ứng viên'):'Thêm ứng viên'}</h2>${id?`<p class="note">Khâu hiện tại: <b>${esc(e.stageName)}</b> · đang chờ ${e.owner}${e.wait!=null?` · ${e.wait}/${e.commit} ngày `+tagStatus(e.status):''}</p>`:''}
+ <div class="form"><label>Họ tên ứng viên<input name="ten" value="${esc(c.ten)}" required></label>
+ <label>Vị trí tuyển dụng<select name="viTri" required><option value="">Chọn vị trí</option>${opt(posNames,c.viTri)}</select></label>
+ <label>Nguồn CV<select name="nguon"><option value=""></option>${opt(SOURCES,c.nguon)}</select></label>
+ <label>Status<select name="ketQua"><option value=""></option>${opt(RESULTS,c.ketQua)}</select></label>
+ <label>Lý do (nếu Rejected / Withdrawn / Offer declined)<select name="lyDoLoai"><option value=""></option>${opt(REASONS,c.lyDoLoai||'')}</select></label>
+ <label>SĐT hoặc email<input name="lienHe" value="${esc(c.lienHe)}"></label>
+ <label>Link CV<input name="linkCV" type="url" value="${esc(c.linkCV)}">${c.linkCV&&/^https?:/.test(c.linkCV)?`<a href="${esc(c.linkCV)}" target="_blank" rel="noopener">Mở CV</a>`:''}</label></div>
+ <h3 style="margin-top:18px">Các mốc ngày</h3><p class="note">Chỉ cần điền ngày, khâu hiện tại và tình trạng tự tính.</p>
+ <div class="steps">${DATES.map(f=>`<label class="${d[f.k]?'has':''}">${f.label}<input type="date" name="d_${f.k}" value="${d[f.k]||''}"></label>`).join('')}</div>
+ <div class="form"><label class="full">Ghi chú, lý do<textarea name="ghiChu">${esc(c.ghiChu)}</textarea></label></div>
+ <div class="acts">${id?'<button type="button" class="danger" id="del">Xoá</button>':''}<span class="sp"></span>${id&&!['xong','dong'].includes(e.stage)?'<button type="button" id="nextStep">Xong khâu này hôm nay</button>':''}<button type="button" id="cancel">Đóng</button><button class="pri" id="save" type="submit">Lưu</button></div>`;
+ form.onsubmit=async ev=>{ev.preventDefault();const f=new FormData(form);const dates={};DATES.forEach(x=>{const v=f.get('d_'+x.k);if(v)dates[x.k]=v});
+  const data={viTri:f.get('viTri'),ten:f.get('ten').trim(),nguon:f.get('nguon'),ketQua:f.get('ketQua'),lyDoLoai:f.get('lyDoLoai')||'',lienHe:(f.get('lienHe')||'').trim(),linkCV:(f.get('linkCV')||'').trim(),ghiChu:f.get('ghiChu').trim(),dates,capNhat:new Date().toISOString()};
+  if(CLOSED.includes(data.ketQua)){data.loaiTai=(c.ketQua===data.ketQua&&c.loaiTai)||evalCand({...data,ketQua:''},SLA,T()).stageName}else data.loaiTai='';
+  const w=checkCand({...data,id},C,T(),P),sv=form.querySelector('#save');
+  if(w.length&&sv.dataset.ok!==JSON.stringify(w)){let b=form.querySelector('.warnbox');if(!b){b=document.createElement('div');b.className='warnbox';form.querySelector('.acts').before(b)}b.innerHTML='<b>Kiểm tra lại trước khi lưu:</b><ul>'+w.map(x=>'<li>'+esc(x)+'</li>').join('')+'</ul>';sv.dataset.ok=JSON.stringify(w);sv.textContent='Vẫn lưu';b.scrollIntoView({block:'nearest'});return}
+  if(await write(()=>db.collection('candidates').doc(id||undefined).set(data))){dlg.close();toast('Đã lưu hồ sơ')}};
+ const nx=form.querySelector('#nextStep');if(nx)nx.onclick=()=>{const order=DATES.map(x=>x.k);const map={loc:'hrLoc',gui:'guiCM',duyet:'cmDuyet',pv:'pvCM',kq:'kqPV',dx:'deXuat',ceo:'duyetOffer',thu:'guiThu',ph:'uvPhanHoi',cho:'nhanViec'};const k=map[e.stage];const inp=form.querySelector(`[name=d_${k}]`);if(inp){inp.value=T();inp.parentElement.classList.add('has');inp.focus();toast('Đã điền ngày hôm nay, bấm Lưu để ghi lại')}};
+ bindCommon(id?()=>db.collection('candidates').doc(id).delete():null);dlg.showModal();
+}
+function openPos(id){
+ const p=id?P.find(x=>x.id===id):{ten:'',khoi:'',phong:'',cap:'',canTuyen:1,hm:'',lyDo:'Tuyển mới',ngayMo:T(),jd:false,ngayCanNhan:'',uuTien:'P2 Bình thường',ngayDong:'',ghiChu:''};if(!p)return;
+ const e=id?evalPos(p,C,T()):null;
+ form.innerHTML=`<h2>${id?esc(p.ten):'Thêm vị trí'}</h2>${e?`<p class="note">${e.cv} CV · ${e.pv} đã phỏng vấn · ${e.thu} thư mời · ${e.hired} đã nhận việc${e.upcoming?' · '+e.upcoming+' sắp nhận':''} · ${tagPos(e.status)}</p>`:''}
+ <div class="form"><label class="full">Vị trí tuyển dụng<input name="ten" value="${esc(p.ten)}" required></label>
+ <label>Khối<input name="khoi" list="khoiL" value="${esc(p.khoi)}"><datalist id="khoiL">${[...new Set([...KHOI,...P.map(x=>x.khoi)].filter(Boolean))].map(k=>`<option value="${esc(k)}">`).join('')}</datalist></label>
+ <label>Phòng, bộ phận<input name="phong" value="${esc(p.phong)}"></label><label>Cấp<input name="cap" value="${esc(p.cap)}"></label>
+ <label>Cần tuyển<input name="canTuyen" type="number" min="0" value="${p.canTuyen??''}"></label><label>Hiring manager<input name="hm" value="${esc(p.hm)}"></label>
+ <label>Lý do tuyển<select name="lyDo"><option value=""></option>${opt(['Tuyển mới','Tuyển thay thế'],p.lyDo)}</select></label>
+ <label>Mức ưu tiên<select name="uuTien"><option value=""></option>${opt(PRIORITIES,p.uuTien)}</select></label>
+ <label>Ngày mở tuyển<input type="date" name="ngayMo" value="${p.ngayMo||''}"></label><label>Ngày cần nhận việc<input type="date" name="ngayCanNhan" value="${p.ngayCanNhan||''}"></label>
+ <label>Ngày đóng job<input type="date" name="ngayDong" value="${p.ngayDong||''}"></label>
+ <label>Đã có JD<select name="jd"><option value="">Chưa</option><option value="1" ${p.jd?'selected':''}>Có</option></select></label>
+ <label class="full">Ghi chú<textarea name="ghiChu">${esc(p.ghiChu)}</textarea></label></div>
+ <div class="acts">${id?'<button type="button" class="danger" id="del">Xoá</button>':''}<span class="sp"></span><button type="button" id="cancel">Đóng</button><button class="pri" type="submit">Lưu</button></div>`;
+ form.onsubmit=async ev=>{ev.preventDefault();const f=new FormData(form);const data={};['ten','khoi','phong','cap','hm','lyDo','uuTien','ngayMo','ngayCanNhan','ngayDong','ghiChu'].forEach(k=>data[k]=(f.get(k)||'').trim());data.canTuyen=+f.get('canTuyen')||0;data.jd=!!f.get('jd');
+  const old=id&&p.ten!==data.ten?p.ten:null;
+  if(await write(()=>db.collection('positions').doc(id||undefined).set(data))){
+   if(old){for(const c of C.filter(c=>c.viTri===old))await write(()=>db.collection('candidates').doc(c.id).update({viTri:data.ten}))}
+   dlg.close();toast('Đã lưu vị trí')}};
+ bindCommon(id?()=>db.collection('positions').doc(id).delete():null);dlg.showModal();
+}
+function bindCommon(del){
+ form.querySelector('#cancel').onclick=()=>dlg.close();
+ form.querySelectorAll('input[type=date]').forEach(i=>i.oninput=()=>i.parentElement.classList.toggle('has',!!i.value));
+ const b=form.querySelector('#del');if(b&&del)b.onclick=async()=>{if(b.dataset.c){if(await write(del)){dlg.close();toast('Đã xoá')}}else{b.dataset.c=1;b.textContent='Bấm lần nữa để xoá'}};
+}
+async function write(fn){
+ if(!db){toast('Chưa kết nối được dữ liệu');return false}
+ try{await fn();return true}catch(e){if(e&&e.code==='invalid_argument'){canWrite=false;setStatus('Bạn chỉ có quyền xem trang này, không lưu được thay đổi.')}else toast('Không lưu được: '+(e&&e.message||e));return false}
+}
+/* ---------- nhập / xuất Excel ---------- */
+let pending=null;
+function loadXLSX(){return window.XLSX?Promise.resolve():new Promise((ok,no)=>{const s=document.createElement('script');s.src='https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';s.onload=ok;s.onerror=()=>no(new Error('Không tải được thư viện đọc Excel'));document.head.appendChild(s)})}
+$('#file').onchange=async ev=>{const f=ev.target.files[0];if(!f)return;const box=$('#impPrev');box.innerHTML='<p class="note">Đang đọc file…</p>';
+ try{await loadXLSX();const wb=XLSX.read(await f.arrayBuffer(),{type:'array'});const sheets={};wb.SheetNames.forEach(n=>sheets[n]=XLSX.utils.sheet_to_json(wb.Sheets[n],{header:1,raw:true,defval:''}));
+  pending=importBook(sheets);const exist=new Set(C.map(c=>(c.viTri+'|'+c.ten).toLowerCase()));const fresh=pending.candidates.filter(c=>!exist.has((c.viTri+'|'+c.ten).toLowerCase()));
+  box.innerHTML=`<p>Đọc được <b>${pending.positions.length}</b> vị trí và <b>${pending.candidates.length}</b> ứng viên${pending.sla?', kèm bảng cam kết':''}. ${fresh.length} ứng viên chưa có trong app.</p>${pending.warnings.length?'<ul class="w">'+pending.warnings.slice(0,8).map(w=>'<li>'+esc(w)+'</li>').join('')+'</ul>':''}
+  <div class="acts" style="justify-content:flex-start"><button class="pri" id="impAdd">Nhập thêm (giữ dữ liệu hiện có)</button><button class="danger" id="impRep">Thay toàn bộ bằng file này</button></div>`;
+  $('#impAdd').onclick=()=>doImport(false);$('#impRep').onclick=ev2=>{const b=ev2.target;if(b.dataset.c)doImport(true);else{b.dataset.c=1;b.textContent=`Bấm lần nữa: xoá ${P.length} vị trí, ${C.length} hồ sơ hiện có`}}}
+ catch(e){box.innerHTML='<p class="note">Không đọc được file: '+esc(e.message)+'</p>'}};
+async function doImport(replace){
+ const box=$('#impPrev');box.innerHTML='<p class="note">Đang nhập…</p>';let n=0;
+ if(replace){for(const c of C)await write(()=>db.collection('candidates').doc(c.id).delete());for(const p of P)await write(()=>db.collection('positions').doc(p.id).delete())}
+ const byName=new Map((replace?[]:P).map(p=>[p.ten,p]));const exist=new Set((replace?[]:C).map(c=>(c.viTri+'|'+c.ten).toLowerCase()));
+ for(const p of pending.positions){const o=byName.get(p.ten);if(!o){await write(()=>db.collection('positions').doc().set(p));n++}}
+ for(const c of pending.candidates){if(exist.has((c.viTri+'|'+c.ten).toLowerCase()))continue;await write(()=>db.collection('candidates').doc().set({...c,capNhat:new Date().toISOString()}));n++}
+ if(pending.sla)await write(()=>db.doc('settings/sla').set(pending.sla));
+ box.innerHTML=`<p>Đã nhập xong ${n} dòng.</p>`;$('#file').value='';pending=null;
+}
+$('#exportX').onclick=async()=>{
+ try{await loadXLSX();
+  const today=T(),E=enriched();const wb=XLSX.utils.book_new();
+  const pv=P.map(p=>{const e=evalPos(p,C,today);return {'Vị trí tuyển dụng':p.ten,'Khối':p.khoi,'Phòng, bộ phận':p.phong,'Cấp':p.cap,'Cần tuyển':e.need,'Hiring manager':p.hm,'Lý do tuyển':p.lyDo,'Ngày mở tuyển':fmt(p.ngayMo),'JD':p.jd?'x':'','Ngày cần nhận việc':fmt(p.ngayCanNhan),'Mức ưu tiên':p.uuTien,'Ngày đóng job':fmt(p.ngayDong),'Số CV':e.cv,'Đã phỏng vấn':e.pv,'Đã gửi thư mời':e.thu,'Đã nhận việc':e.hired,'Sắp nhận việc':e.upcoming,'Số ngày đã mở':e.days??'','Tình trạng':e.status,'Ghi chú':p.ghiChu}});
+  const cv=E.map(x=>{const r={'Vị trí tuyển dụng':x.viTri,'Họ tên ứng viên':x.ten,'Nguồn CV':x.nguon};DATES.forEach(f=>r[f.label]=fmt(x.dates&&x.dates[f.k]));Object.assign(r,{'Status':x.ketQua,'Lý do':x.lyDoLoai||'','Loại tại khâu':x.loaiTai||'','Liên hệ':x.lienHe||'','Link CV':x.linkCV||'','Khâu hiện tại':x.e.stageName,'Đang chờ ai':x.e.owner,'Số ngày chờ':x.e.wait??'','Cam kết (ngày)':x.e.commit??'','Tình trạng':x.e.status,'Ghi chú, lý do':x.ghiChu});return r});
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(pv),'Vị trí đang tuyển');XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(cv),'Tracking CV');
+  const out=XLSX.write(wb,{bookType:'xlsx',type:'array'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([out],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'}));a.download=`AVES tuyen dung ${today}.xlsx`;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},1000);
+ }catch(e){if(e&&e.code!=='cancelled'&&e.code!=='declined')toast('Không xuất được file: '+(e&&e.message||e))}};
+/* ---------- sự kiện ---------- */
+$('#saveSla').onclick=async()=>{const o={};document.querySelectorAll('#slaT input').forEach(i=>o[i.dataset.k]=Math.max(0,+i.value||0));if(await write(()=>db.doc('settings/sla').set(o)))toast('Đã lưu cam kết')};
+['#q','#fPos','#fStage','#fStatus','#fOwner','#fHM'].forEach(s=>$(s).addEventListener('input',()=>{const E=enriched();renderCands(E);renderBoard(E);try{localStorage.setItem('aves-f',JSON.stringify({o:$('#fOwner').value,h:$('#fHM').value}))}catch(e){}}));
+try{const m=JSON.parse(localStorage.getItem('aves-f')||'{}');if(m.o)$('#fOwner').value=m.o;if(m.h){$('#fHM').innerHTML=`<option>${esc(m.h)}</option>`;$('#fHM').value=m.h}}catch(e){}
+$('#quick').addEventListener('submit',async ev=>{ev.preventDefault();const f=new FormData(ev.target);
+ const names=String(f.get('ten')).split(/\n+/).map(x=>x.trim()).filter(Boolean);if(!names.length||!f.get('viTri'))return;
+ const d0=f.get('nhanCV')||T(),hr=f.get('hr');let n=0;
+ for(const ten of names){const dates={nhanCV:d0};if(hr){dates.hrLoc=T()}if(hr==='send')dates.guiCM=T();
+  const dup=C.some(c=>c.viTri===f.get('viTri')&&(c.ten||'').toLowerCase()===ten.toLowerCase());if(dup){toast(`${ten} đã có ở vị trí này, bỏ qua`);continue}
+  if(await write(()=>db.collection('candidates').doc().set({viTri:f.get('viTri'),ten,nguon:f.get('nguon')||'',lienHe:names.length>1?'':(f.get('lienHe')||'').trim(),linkCV:names.length>1?'':(f.get('linkCV')||'').trim(),dates,ketQua:'In progress',ghiChu:'',capNhat:new Date().toISOString()})))n++}
+ if(n){toast(`Đã thêm ${n} CV`);ev.target.ten.value='';ev.target.lienHe.value='';ev.target.linkCV.value='';ev.target.ten.focus()}});
+$('#quick').ten.addEventListener('input',e=>{e.target.style.height='auto';e.target.style.height=Math.min(200,e.target.scrollHeight+2)+'px'});
+$('#hrToday').addEventListener('click',ev=>{const b=ev.target.closest('[data-act]');if(b){ev.stopPropagation();hrAct(b.dataset.act,b.dataset.cid);return}const k=ev.target.closest('.kc');if(k)openCand(k.dataset.id)});
+const bd=$('#board');
+bd.addEventListener('dragstart',ev=>{const k=ev.target.closest('.kc');if(k){ev.dataTransfer.setData('text/plain',k.dataset.id);ev.dataTransfer.effectAllowed='move'}});
+bd.addEventListener('dragover',ev=>{const c=ev.target.closest('.col');if(c){ev.preventDefault();bd.querySelectorAll('.over').forEach(x=>x!==c&&x.classList.remove('over'));c.classList.add('over')}});
+bd.addEventListener('dragleave',ev=>{const c=ev.target.closest('.col');if(c&&!c.contains(ev.relatedTarget))c.classList.remove('over')});
+bd.addEventListener('drop',ev=>{const c=ev.target.closest('.col');if(!c)return;ev.preventDefault();c.classList.remove('over');const id=ev.dataTransfer.getData('text/plain');if(id)moveTo(id,c.dataset.stage)});
+bd.addEventListener('click',ev=>{const b=ev.target.closest('[data-next]');if(b){ev.stopPropagation();const c=C.find(x=>x.id===b.dataset.next);if(c){const o=STAGES.map(s=>s.k);moveTo(c.id,o[o.indexOf(evalCand(c,SLA,T()).stage)+1])}return}const k=ev.target.closest('.kc');if(k)openCand(k.dataset.id)});
+bd.addEventListener('keydown',ev=>{if(ev.key==='Enter'&&ev.target.classList.contains('kc'))openCand(ev.target.dataset.id)});
+['#qp','#fKhoi','#fPStatus'].forEach(s=>$(s).addEventListener('input',()=>renderPoss()));
+$('#addCand').onclick=()=>openCand(null);$('#addPos').onclick=()=>openPos(null);
+document.addEventListener('click',ev=>{const tr=ev.target.closest('tr.click');if(!tr)return;if(tr.dataset.id)openCand(tr.dataset.id);else if(tr.dataset.pid)openPos(tr.dataset.pid)});
+document.addEventListener('keydown',ev=>{if(ev.key==='Enter'){const tr=ev.target.closest&&ev.target.closest('tr.click');if(tr)tr.click()}});
+const views=['tong-quan','ung-vien','bang-khau','vi-tri','cai-dat','nguoi-dung'];
+function route(){const v=views.includes(location.hash.slice(1))?location.hash.slice(1):'tong-quan';views.forEach(x=>$('#v-'+x).hidden=x!==v);document.querySelectorAll('#nav a').forEach(a=>a.classList.toggle('on',a.dataset.v===v));$('#candTools').hidden=!['ung-vien','bang-khau'].includes(v)}
+addEventListener('hashchange',route);route();renderAll();
+/* ---------- người dùng ---------- */
+const ROLE={admin:'Admin',editor:'Editor',viewer:'Viewer'};
+function renderMembers(){
+ $('#memT').innerHTML='<thead><tr><th>Email</th><th>Quyền</th><th></th></tr></thead><tbody>'+M.map(m=>`<tr><td>${esc(m.email)}</td><td><select data-mrole="${esc(m.email)}" ${m.email===me?'disabled':''} aria-label="Quyền">${Object.keys(ROLE).map(k=>`<option value="${k}" ${k===m.role?'selected':''}>${ROLE[k]}</option>`).join('')}</select></td><td>${m.email===me?'<span class="note">Bạn</span>':`<button type="button" class="danger" data-mdel="${esc(m.email)}">Xoá</button>`}</td></tr>`).join('')+'</tbody>';
+}
+async function loadMembers(){const {data,error}=await sb.from('members').select('email,role').order('email');if(!error){M=data;renderMembers()}}
+$('#memForm').addEventListener('submit',async ev=>{ev.preventDefault();const f=new FormData(ev.target);const email=String(f.get('email')).trim().toLowerCase();
+ const {error}=await sb.from('members').upsert({email,role:f.get('role')});if(error)toast('Không thêm được: '+error.message);else{toast('Đã thêm '+email);ev.target.reset();loadMembers()}});
+$('#memT').addEventListener('change',async ev=>{const e=ev.target.dataset.mrole;if(!e)return;const {error}=await sb.from('members').update({role:ev.target.value}).eq('email',e);toast(error?'Không đổi được: '+error.message:'Đã đổi quyền');loadMembers()});
+$('#memT').addEventListener('click',async ev=>{const b=ev.target.closest('[data-mdel]');if(!b)return;if(!b.dataset.c){b.dataset.c=1;b.textContent='Bấm lần nữa';return}const {error}=await sb.from('members').delete().eq('email',b.dataset.mdel);toast(error?'Không xoá được: '+error.message:'Đã xoá');loadMembers()});
+/* ---------- đăng nhập và kết nối dữ liệu ---------- */
+const CFG=window.APP_CONFIG||{};
+const sb=window.supabase&&CFG.SUPABASE_URL?window.supabase.createClient(CFG.SUPABASE_URL,CFG.SUPABASE_ANON_KEY):null;
+function showLogin(msg){$('#login').hidden=false;if(msg)$('#loginMsg').textContent=msg}
+$('#oauthBtns').innerHTML=(CFG.LOGIN_GOOGLE?'<button type="button" data-oauth="google">Đăng nhập bằng Google</button>':'')+(CFG.LOGIN_MICROSOFT?'<button type="button" data-oauth="azure">Đăng nhập bằng Microsoft</button>':'');
+$('#oauthBtns').addEventListener('click',ev=>{const b=ev.target.closest('[data-oauth]');if(b&&sb)sb.auth.signInWithOAuth({provider:b.dataset.oauth,options:{redirectTo:location.origin+location.pathname,scopes:b.dataset.oauth==='azure'?'email':undefined}})});
+$('#loginForm').addEventListener('submit',async ev=>{ev.preventDefault();const email=$('#loginEmail').value.trim().toLowerCase();const btn=ev.target.querySelector('button');btn.disabled=true;
+ const {error}=await sb.auth.signInWithOtp({email,options:{emailRedirectTo:location.origin+location.pathname,shouldCreateUser:true}});btn.disabled=false;
+ $('#loginMsg').textContent=error?'Không gửi được link: '+error.message:`Đã gửi link đăng nhập tới ${email}. Mở email và bấm vào link để vào app.`});
+let started=false;
+async function start(session){
+ if(started)return;me=(session.user.email||'').toLowerCase();
+ const {data,error}=await sb.from('members').select('role').eq('email',me).maybeSingle();
+ if(error||!data){showLogin(`Tài khoản ${me} chưa được cấp quyền dùng app. Hãy nhờ quản trị viên (phòng Nhân sự) thêm email này.`);$('#oauthBtns').innerHTML='<button type="button" id="outBtn">Đăng xuất để dùng email khác</button>';$('#outBtn').onclick=()=>sb.auth.signOut().then(()=>location.reload());$('#loginForm').hidden=true;return}
+ started=true;role=data.role;canWrite=role!=='viewer';$('#login').hidden=true;
+ document.body.classList.toggle('ro',!canWrite);if(!canWrite)setStatus('Bạn đang ở quyền Viewer: chỉ xem, không thêm hoặc sửa được dữ liệu.');
+ $('#who').innerHTML=`<span>${esc(me)} · ${ROLE[role]}</span><button type="button" id="logout">Đăng xuất</button>`;$('#logout').onclick=()=>sb.auth.signOut().then(()=>location.reload());
+ $('#navUsers').hidden=role!=='admin';if(role==='admin'){loadMembers()}
+ db=createStore(sb);
+ const timer=setTimeout(()=>setStatus('Chưa tải được dữ liệu. Kiểm tra kết nối mạng.'),10000);
+ const done=()=>{if(loaded.p&&loaded.c){clearTimeout(timer);if(canWrite)setStatus('')}};
+ const err=e=>{clearTimeout(timer);setStatus('Lỗi tải dữ liệu ('+(e&&e.message||'lỗi')+'). Tải lại trang để thử lại.')};
+ db.collection('positions').onSnapshot(s=>{P=s.docs.map(d=>({id:d.id,...d.data()}));loaded.p=1;done();renderAll()},err);
+ db.collection('candidates').onSnapshot(s=>{C=s.docs.map(d=>{const v=d.data();return {id:d.id,...v,ketQua:normRes(v.ketQua)}});loaded.c=1;done();renderAll()},err);
+ db.doc('settings/sla').onSnapshot(s=>{SLA=s.exists?s.data():{};renderAll()},err);
+}
+if(!sb){showLogin('Chưa cấu hình kết nối Supabase (file config.js).');$('#loginForm').hidden=true}
+else{
+ sb.auth.getSession().then(({data})=>{if(data.session)start(data.session);else showLogin()});
+ sb.auth.onAuthStateChange((ev,session)=>{if(session)start(session)});
+}
+}
+</script>
+</body>
+</html>
