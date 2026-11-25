@@ -171,7 +171,7 @@ ul.w{margin:6px 0;padding-left:20px;font-size:13px;color:var(--mute)}
 <div class="login" id="login" hidden><div class="box">
  <h1>Tuyển dụng AVES</h1><p class="note" id="loginMsg">Đăng nhập để xem và cập nhật tình hình tuyển dụng.</p>
  <div id="oauthBtns" style="display:grid;gap:10px;margin-top:18px"></div>
- <form id="loginForm"><label class="note" for="loginEmail">Hoặc nhận link đăng nhập qua email</label><input id="loginEmail" type="email" required placeholder="ten@aves.tech" autocomplete="email"><button class="pri" type="submit">Gửi link đăng nhập</button></form>
+ <form id="loginForm"><label class="note" for="loginEmail">Hoặc nhận link đăng nhập qua email</label><input id="loginEmail" type="email" required placeholder="ten@aves.tech" autocomplete="email"><input id="loginPass" type="password" placeholder="Mật khẩu (bỏ trống nếu muốn nhận link qua email)" autocomplete="current-password"><button class="pri" type="submit" id="loginBtn">Gửi link đăng nhập</button></form>
 </div></div>
 <dialog id="dlg"><form class="dlg" id="dlgForm" method="dialog"></form></dialog>
 <div class="toast" id="toast" role="status"></div>
@@ -437,8 +437,11 @@ if(!CFG.LOGIN_GOOGLE&&!CFG.LOGIN_MICROSOFT){const l=document.querySelector('labe
 $('#oauthBtns').innerHTML=(CFG.LOGIN_GOOGLE?'<button type="button" data-oauth="google">Đăng nhập bằng Google</button>':'')+(CFG.LOGIN_MICROSOFT?'<button type="button" data-oauth="azure">Đăng nhập bằng Microsoft</button>':'');
 $('#oauthBtns').addEventListener('click',ev=>{const b=ev.target.closest('[data-oauth]');if(b&&sb)sb.auth.signInWithOAuth({provider:b.dataset.oauth,options:{redirectTo:location.origin+location.pathname,scopes:b.dataset.oauth==='azure'?'email':undefined}})});
 $('#loginForm').addEventListener('submit',async ev=>{ev.preventDefault();const email=$('#loginEmail').value.trim().toLowerCase();const btn=ev.target.querySelector('button');btn.disabled=true;
+ const pass=$('#loginPass').value;
+ if(pass){const {error}=await sb.auth.signInWithPassword({email,password:pass});btn.disabled=false;if(error)$('#loginMsg').textContent='Không đăng nhập được: '+(/invalid/i.test(error.message)?'sai email hoặc mật khẩu.':error.message);return}
  const {error}=await sb.auth.signInWithOtp({email,options:{emailRedirectTo:location.origin+location.pathname,shouldCreateUser:true}});btn.disabled=false;
- $('#loginMsg').textContent=error?'Không gửi được link: '+error.message:`Đã gửi link đăng nhập tới ${email}. Mở email và bấm vào link để vào app.`});
+ $('#loginMsg').textContent=error?(/rate limit/i.test(error.message)?'Đã gửi quá nhiều email trong giờ này. Hãy đăng nhập bằng mật khẩu hoặc thử lại sau khoảng 1 giờ.':'Không gửi được link: '+error.message):`Đã gửi link đăng nhập tới ${email}. Mở email và bấm vào link để vào app.`});
+$('#loginPass').addEventListener('input',e=>{$('#loginBtn').textContent=e.target.value?'Đăng nhập':'Gửi link đăng nhập'});
 let started=false;
 async function start(session){
  if(started)return;me=(session.user.email||'').toLowerCase();
